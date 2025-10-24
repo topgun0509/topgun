@@ -138,6 +138,8 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { TextureLoader } from 'three/examples/jsm/loaders/TextureLoader.js';
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
+const BASE_URL = '/topgun/'; // Base URL for GitHub Pages deployment
+
 // DOM Elements
 const infoElement = document.getElementById('info');
 const gameOverElement = document.getElementById('game-over');
@@ -559,7 +561,7 @@ function loadModels() {
     };
 
     // Loader for Player's F-14 GLB
-    gltfLoader.load('f-14_tomcat_-_fighter_jet_-_free.glb', (gltf) => {
+    gltfLoader.load(BASE_URL + 'f-14_tomcat_-_fighter_jet_-_free.glb', (gltf) => {
         console.log("Player F-14 GLB loaded.");
         plane = gltf.scene;
         plane.scale.set(0.02, 0.02, 0.02); // Initial scale, adjust as needed (even smaller)
@@ -575,7 +577,7 @@ function loadModels() {
     });
 
     // Loader for Enemy's J-36
-    objLoader.load('chengdu-j-36/source/Chengdu J-36/Chengdu J-36.obj', (obj) => {
+    objLoader.load(BASE_URL + 'chengdu-j-36/source/Chengdu J-36/Chengdu J-36.obj', (obj) => {
         console.log("Enemy J-36 loaded.");
         const material = new THREE.MeshStandardMaterial({ color: 0x8B0000 }); // Dark Red
         obj.traverse((child) => {
@@ -597,7 +599,7 @@ function loadModels() {
     });
 
     // Loader for F-35 GLB (for USA map enemy)
-    gltfLoader.load('f-35_lightning_ii_-_fighter_jet_-_free.glb', (gltf) => {
+    gltfLoader.load(BASE_URL + 'f-35_lightning_ii_-_fighter_jet_-_free.glb', (gltf) => {
         console.log("F-35 GLB loaded.");
         f35EnemyPlaneModel = gltf.scene;
         f35Loaded = true;
@@ -613,7 +615,7 @@ function loadModels() {
     });
 
     // Loader for Su-57 GLB (for Russia map enemy)
-    gltfLoader.load('sukhoi_su-57_felon.glb', (gltf) => {
+    gltfLoader.load(BASE_URL + 'sukhoi_su-57_felon.glb', (gltf) => {
         console.log("Su-57 GLB loaded.");
         su57EnemyPlaneModel = gltf.scene;
         su57Loaded = true;
@@ -629,7 +631,7 @@ function loadModels() {
     });
 
     // Loader for J-20 GLB (for China map enemy)
-    gltfLoader.load('chengdu_j-20_fighter_v2.glb', (gltf) => {
+    gltfLoader.load(BASE_URL + 'chengdu_j-20_fighter_v2.glb', (gltf) => {
         console.log("J-20 GLB loaded.");
         let mergedGeometry = new THREE.BufferGeometry();
         const material = new THREE.MeshStandardMaterial({ color: 0xAAAAAA }); // Default material
@@ -678,7 +680,7 @@ function loadModels() {
     });
 
     // Loader for F-15EX GLB (for Korea map enemy)
-    gltfLoader.load('ba_f-15ex_eagle_ii.glb', (gltf) => {
+    gltfLoader.load(BASE_URL + 'ba_f-15ex_eagle_ii.glb', (gltf) => {
         console.log("F-15EX GLB loaded.");
         f15EnemyPlaneModel = gltf.scene;
         f15Loaded = true;
@@ -694,7 +696,7 @@ function loadModels() {
     });
 
     // Loader for F-2 GLB (for Japan map enemy)
-    gltfLoader.load('mitsubishi_f-2_-_fighter_jet_-_free.glb', (gltf) => {
+    gltfLoader.load(BASE_URL + 'mitsubishi_f-2_-_fighter_jet_-_free.glb', (gltf) => {
         console.log("F-2 GLB loaded.");
         f2EnemyPlaneModel = gltf.scene;
         f2Loaded = true;
@@ -738,7 +740,7 @@ function loadModels() {
     coinLoaded = true; // Ensure animation starts even if GLB is skipped
 
     // Loader for Mystery Box
-    gltfLoader.load('guess_box.glb', (gltf) => {
+    gltfLoader.load(BASE_URL + 'guess_box.glb', (gltf) => {
         console.log("Mystery Box GLB loaded.");
         mysteryBoxModel = gltf.scene;
         createMysteryBoxes();
@@ -755,7 +757,7 @@ function loadModels() {
     });
 
     // Loader for Bomb GLB
-    gltfLoader.load('bomb.glb', (gltf) => {
+    gltfLoader.load(BASE_URL + 'bomb.glb', (gltf) => {
         console.log("Bomb GLB loaded.");
         bombModel = gltf.scene;
         bombLoaded = true;
