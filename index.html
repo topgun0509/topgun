@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOP GUN: FINAL FLIGHT</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <div id="login-screen">
+        <div class="modal-content">
+            <h2>TOP GUN: FINAL FLIGHT</h2>
+            <p>시작하려면 자격 증명을 입력하세요.</p>
+            <input type="text" id="username-input" placeholder="사용자 이름">
+            <input type="password" id="password-input" placeholder="비밀번호">
+            <button id="login-button">로그인</button>
+            <button id="goto-signup-button">회원가입</button>
+        </div>
+    </div>
+
+    <div id="signup-screen" style="display: none;">
+        <div class="modal-content">
+            <h2>회원가입</h2>
+            <p>새 계정을 만드세요.</p>
+            <input type="text" id="new-username-input" placeholder="사용자 이름">
+            <input type="password" id="new-password-input" placeholder="비밀번호">
+            <button id="signup-button">회원가입</button>
+            <button id="back-to-login-button">로그인으로 돌아가기</button>
+        </div>
+    </div>
+
+    <div id="home-screen" style="display: none;">
+        <div class="modal-content">
+            <div id="user-welcome" style="display: none;"></div>
+            <h2>TOP GUN: FINAL FLIGHT</h2>
+            <div class="button-container">
+                <button id="start-game-button-default">기본 맵</button>
+                <button id="start-game-button-usa">미국</button>
+                <button id="start-game-button-china">중국</button>
+                <button id="start-game-button-korea">한국</button>
+                <button id="start-game-button-japan">일본</button>
+                <button id="start-game-button-russia">러시아</button>
+                <button id="how-to-play-button">게임 방법</button>
+                <button id="bank-button">은행</button>
+                <button id="shop-button">상점</button>
+            </div>
+            <div id="instructions-content" style="display: none;">
+                <hr>
+                <p><strong>조작:</strong> 마우스를 움직여 비행기를 조종하고, 스페이스바를 눌러 미사일을 발사하세요.</p>
+                <p><strong>목표:</strong> 건물, 폭탄, 적의 미사일을 피하며 최대한 오래 생존하세요.</p>
+                <p><strong>아이템:</strong></p>
+                <p>🛡️ 파란색 방어막을 먹으면 5초 동안 무적이 됩니다.</p>
+                <p>🧲 U자 모양 자석을 먹으면 2초 동안 주변의 코인을 끌어당깁니다.</p>
+                <p>🚀 제트 엔진을 먹으면 10초 동안 게임 속도가 2배로 빨라집니다.</p>
+                <p>✝️ 갈색 십자가를 먹으면, 우클릭으로 폭발하는 십자가를 발사할 수 있습니다.</p>
+                <p>🎁 보라색 상자를 먹으면 코인, 무적, 속도 향상, 십자가 폭탄 등 무작위 보상을 얻습니다.</p>
+                <p><strong>적:</strong> 30초마다 나타나는 적기는 미사일로 격추할 수 있습니다.</p>
+            </div>
+        </div>
+    </div>
+    <div id="info">
+        마우스를 움직여 비행기를 조종하세요! (Space: 미사일)
+    </div>
+    <div id="hud">
+        <span>Lives: <span id="lives-count"></span></span>
+        <span>Coins: <span id="coin-icons"></span></span>
+    </div>
+    <div id="reward-message"></div>
+    
+    <div id="game-over">
+        <p>게임 오버</p>
+        <button id="game-over-home-button">홈</button>
+    </div>
+    <div id="bank-screen" style="display: none;">
+        <div class="modal-content">
+            <h2>은행</h2>
+            <p>총 Tomcat Credit: <span id="total-coins-display">0</span></p>
+            <button id="bank-back-button">돌아가기</button>
+        </div>
+    </div>
+    <div id="shop-screen" style="display: none;">
+        <div class="modal-content">
+            <h2>상점</h2>
+            <div class="shop-items-container">
+                <div class="shop-item">
+                    <h3>추가 생명</h3>
+                    <p class="item-description">게임 시작 시 생명 1개 추가</p>
+                    <p>가격: <span class="item-price">80</span>Tomcat Credit</p>
+                    <button class="buy-button" id="buy-extra-life">구매</button>
+                </div>
+                <div class="shop-item">
+                    <h3>미사일 발사 속도 향상</h3>
+                    <p class="item-description">미사일 발사 딜레이 감소</p>
+                    <p>가격: <span class="item-price">50</span> Tomcat Credit</p>
+                    <button class="buy-button" id="buy-missile-firerate">구매</button>
+                </div>
+                <div class="shop-item">
+                    <h3>자석 효과 시간 증가</h3>
+                    <p class="item-description">자석 아이템 효과 시간 2초 증가</p>
+                    <p>가격: <span class="item-price">30</span> Tomcat Credit</p>
+                    <button class="buy-button" id="buy-magnet-duration">구매</button>
+                </div>
+                <div class="shop-item">
+                    <h3>전파 교란 아이템</h3>
+                    <p class="item-description">왼쪽 마우스 클릭 시 10초 동안 적기가 미사일을 쏘지 못하게 합니다.</p>
+                    <p>가격: <span class="item-price">100</span> Tomcat Credit</p>
+                    <button class="buy-button" id="buy-jamming-item">구매</button>
+                </div>
+                <div class="shop-item">
+                    <h3>십자가 판매</h3>
+                    <p class="item-description">십자가를 개당 2코인에 판매합니다.</p>
+                    <button class="buy-button" id="sell-cross-button">판매</button>
+                </div>
+            </div>
+            <button id="shop-back-button">돌아가기</button>
+        </div>
+    </div>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.137.0/build/three.module.js",
+            "three/examples/jsm/loaders/GLTFLoader.js": "https://unpkg.com/three@0.137.0/examples/jsm/loaders/GLTFLoader.js",
+            "three/examples/jsm/loaders/OBJLoader.js": "https://unpkg.com/three@0.137.0/examples/jsm/loaders/OBJLoader.js",
+            "three/examples/jsm/loaders/TextureLoader.js": "./js/TextureLoader.js",
+            "three/examples/jsm/utils/BufferGeometryUtils.js": "https://unpkg.com/three@0.137.0/examples/jsm/utils/BufferGeometryUtils.js"
+        }
+    }
+    </script>
+    <script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { TextureLoader } from 'three/examples/jsm/loaders/TextureLoader.js';
+import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+
+// DOM Elements
+const infoElement = document.getElementById('info');
+const gameOverElement = document.getElementById('game-over');
+
+const livesCountElement = document.getElementById('lives-count');
+const coinIconsElement = document.getElementById('coin-icons');
+const homeScreen = document.getElementById('home-screen');
+const startGameButton = document.getElementById('start-game-button');
+const howToPlayButton = document.getElementById('how-to-play-button');
+const instructionsContent = document.getElementById('instructions-content');
+const hudElement = document.getElementById('hud');
+const bankButton = document.getElementById('bank-button');
+const bankScreen = document.getElementById('bank-screen');
+const totalCoinsDisplay = document.getElementById('total-coins-display');
+const bankBackButton = document.getElementById('bank-back-button');
+const shopButton = document.getElementById('shop-button');
+const shopScreen = document.getElementById('shop-screen');
+const shopBackButton = document.getElementById('shop-back-button');
+
+const buyExtraLifeButton = document.getElementById('buy-extra-life');
+const buyMissileFirerateButton = document.getElementById('buy-missile-firerate');
+const buyMagnetDurationButton = document.getElementById('buy-magnet-duration');
+const buyJammingItemButton = document.getElementById('buy-jamming-item');
+
+// --- MAP THEMES --- 
+const MAP_THEMES = {
+    'default': {
+        colors: [0xaaaaaa],
+        landmark: null,
+        buildingCount: 30,
+        initialGameSpeed: 0.5,
+        enemyModel: 'j36',
+        missileOffset: new THREE.Vector3(0, 0, -2)
+    },
+    'usa': {
+        colors: [0xB22234, 0xFFFFFF, 0x3C3B6E],
+        landmark: null,
+        buildingCount: 30,
+        initialGameSpeed: 0.6,
+        enemyModel: 'f35',
+        missileOffset: new THREE.Vector3(0, 0, -2)
+    },
+    'china': {
+        colors: [0xEE1C25, 0xFFFF00],
+        landmark: null,
+        buildingCount: 30,
+        initialGameSpeed: 0.7,
+        enemyModel: 'j20',
+        missileOffset: new THREE.Vector3(0, 0, -2)
+    },
+    'korea': {
+        colors: [0xCD2E3A, 0x0047A0, 0xFFFFFF, 0x000000],
+        landmark: null,
+        buildingCount: 30,
+        initialGameSpeed: 0.55,
+        enemyModel: 'f15',
+        missileOffset: new THREE.Vector3(0, 0, -2)
+    },
+    'japan': {
+        colors: [0xBC002D, 0xFFFFFF],
+        landmark: null,
+        buildingCount: 30,
+        initialGameSpeed: 0.5,
+        enemyModel: 'f2',
+        missileOffset: new THREE.Vector3(0, 0, 5)
+    },
+    'russia': {
+        colors: [0xFFFFFF, 0x0033A0, 0xDA291C], // White, Blue, Red
+        landmark: null,
+        buildingCount: 30,
+        initialGameSpeed: 0.65,
+        enemyModel: 'su57',
+        missileOffset: new THREE.Vector3(0, 0, -2)
+    }
+};
+
+// --- UPGRADE CONSTANTS ---
+const UPGRADE_KEYS = {
+    EXTRA_LIFE: 'upgradeExtraLife',
+    MISSILE_FIRERATE: 'upgradeMissileFirerate',
+    MAGNET_DURATION: 'upgradeMagnetDuration',
+    JAMMING_ITEM: 'upgradeJammingItem'
+};
+
+const UPGRADE_COSTS = {
+    [UPGRADE_KEYS.EXTRA_LIFE]: 80,
+    [UPGRADE_KEYS.MISSILE_FIRERATE]: 50,
+    [UPGRADE_KEYS.MAGNET_DURATION]: 30,
+    [UPGRADE_KEYS.JAMMING_ITEM]: 100
+};
+
+// --- HELPER FUNCTIONS FOR UPGRADES ---
+function getUpgradeStatus(key) {
+    return localStorage.getItem(key) === 'true';
+}
+
+function setUpgradeStatus(key, status) {
+    localStorage.setItem(key, status ? 'true' : 'false');
+}
+
+function getTotalCoins() {
+    return parseInt(localStorage.getItem('totalCoins') || '0');
+}
+
+function setTotalCoins(coins) {
+    localStorage.setItem('totalCoins', coins.toString());
+}
+
+function getTotalCrosses() {
+    return parseInt(localStorage.getItem('totalCrosses') || '0');
+}
+
+function setTotalCrosses(crosses) {
+    localStorage.setItem('totalCrosses', crosses.toString());
+}
+
+function updateShopUI() {
+    const currentTotalCoins = getTotalCoins();
+    totalCoinsDisplay.textContent = currentTotalCoins; // Update bank screen display
+
+    // Update Extra Life button
+    if (getUpgradeStatus(UPGRADE_KEYS.EXTRA_LIFE)) {
+        buyExtraLifeButton.textContent = '구매 완료';
+        buyExtraLifeButton.disabled = true;
+    } else {
+        buyExtraLifeButton.textContent = `구매 (${UPGRADE_COSTS[UPGRADE_KEYS.EXTRA_LIFE]} Tomcat Credit)`;
+        buyExtraLifeButton.disabled = currentTotalCoins < UPGRADE_COSTS[UPGRADE_KEYS.EXTRA_LIFE];
+    }
+
+    // Update Missile Firerate button
+    if (getUpgradeStatus(UPGRADE_KEYS.MISSILE_FIRERATE)) {
+        buyMissileFirerateButton.textContent = '구매 완료';
+        buyMissileFirerateButton.disabled = true;
+    } else {
+        buyMissileFirerateButton.textContent = `구매 (${UPGRADE_COSTS[UPGRADE_KEYS.MISSILE_FIRERATE]} Tomcat Credit)`;
+        buyMissileFirerateButton.disabled = currentTotalCoins < UPGRADE_COSTS[UPGRADE_KEYS.MISSILE_FIRERATE];
+    }
+
+    // Update Magnet Duration button
+    if (getUpgradeStatus(UPGRADE_KEYS.MAGNET_DURATION)) {
+        buyMagnetDurationButton.textContent = '구매 완료';
+        buyMagnetDurationButton.disabled = true;
+    } else {
+        buyMagnetDurationButton.textContent = `구매 (${UPGRADE_COSTS[UPGRADE_KEYS.MAGNET_DURATION]} Tomcat Credit)`;
+        buyMagnetDurationButton.disabled = currentTotalCoins < UPGRADE_COSTS[UPGRADE_KEYS.MAGNET_DURATION];
+    }
+
+    // Update Jamming Item button
+    if (getUpgradeStatus(UPGRADE_KEYS.JAMMING_ITEM)) {
+        buyJammingItemButton.textContent = '구매 완료';
+        buyJammingItemButton.disabled = true;
+    } else {
+        buyJammingItemButton.textContent = `구매 (${UPGRADE_COSTS[UPGRADE_KEYS.JAMMING_ITEM]} Tomcat Credit)`;
+        buyJammingItemButton.disabled = currentTotalCoins < UPGRADE_COSTS[UPGRADE_KEYS.JAMMING_ITEM];
+    }
+}
+
+function buyUpgrade(upgradeKey, cost) {
+    let currentTotalCoins = getTotalCoins();
+
+    if (currentTotalCoins >= cost) {
+        currentTotalCoins -= cost;
+        setTotalCoins(currentTotalCoins);
+        setUpgradeStatus(upgradeKey, true);
+        updateShopUI(); // Refresh UI after purchase
+        alert('아이템을 구매했습니다!');
+        return true;
+    } else {
+        alert('코인이 부족합니다!');
+        return false;
+    }
+}
+
+
+// --- EVENT LISTENERS ---
+function setupHomeScreenEventListeners() {
+    // --- NEW GAME START LOGIC ---
+    const startGame = (mapName) => {
+        selectedMap = mapName;
+        homeScreen.style.display = 'none';
+        init(); // Start the game with the selected map
+    };
+
+    document.getElementById('start-game-button-default').addEventListener('click', () => startGame('default'));
+    document.getElementById('start-game-button-usa').addEventListener('click', () => startGame('usa'));
+    document.getElementById('start-game-button-china').addEventListener('click', () => startGame('china'));
+    document.getElementById('start-game-button-korea').addEventListener('click', () => startGame('korea'));
+    document.getElementById('start-game-button-japan').addEventListener('click', () => startGame('japan'));
+    document.getElementById('start-game-button-russia').addEventListener('click', () => startGame('russia'));
+
+    // --- OTHER HOME SCREEN BUTTONS ---
+    howToPlayButton.addEventListener('click', () => {
+        const isVisible = instructionsContent.style.display === 'block';
+        instructionsContent.style.display = isVisible ? 'none' : 'block';
+    });
+
+    const gameOverHomeButton = document.getElementById('game-over-home-button');
+    if (gameOverHomeButton) {
+        gameOverHomeButton.addEventListener('click', () => {
+            gameOverElement.style.display = 'none';
+            homeScreen.style.display = 'flex';
+        });
+    }
+
+    bankButton.addEventListener('click', () => {
+        homeScreen.style.display = 'none';
+        bankScreen.style.display = 'flex';
+        updateShopUI();
+    });
+
+    bankBackButton.addEventListener('click', () => {
+        bankScreen.style.display = 'none';
+        homeScreen.style.display = 'flex';
+    });
+
+    shopButton.addEventListener('click', () => {
+        homeScreen.style.display = 'none';
+        shopScreen.style.display = 'flex';
+        updateShopUI();
+    });
+
+    shopBackButton.addEventListener('click', () => {
+        shopScreen.style.display = 'none';
+        homeScreen.style.display = 'flex';
+    });
+
+    // Shop item buy buttons
+    buyExtraLifeButton.addEventListener('click', () => {
+        buyUpgrade(UPGRADE_KEYS.EXTRA_LIFE, UPGRADE_COSTS[UPGRADE_KEYS.EXTRA_LIFE]);
+    });
+
+    buyMissileFirerateButton.addEventListener('click', () => {
+        buyUpgrade(UPGRADE_KEYS.MISSILE_FIRERATE, UPGRADE_COSTS[UPGRADE_KEYS.MISSILE_FIRERATE]);
+    });
+
+    buyMagnetDurationButton.addEventListener('click', () => {
+        buyUpgrade(UPGRADE_KEYS.MAGNET_DURATION, UPGRADE_COSTS[UPGRADE_KEYS.MAGNET_DURATION]);
+    });
+
+    buyJammingItemButton.addEventListener('click', () => {
+        buyUpgrade(UPGRADE_KEYS.JAMMING_ITEM, UPGRADE_COSTS[UPGRADE_KEYS.JAMMING_ITEM]);
+    });
+
+    const sellCrossButton = document.getElementById('sell-cross-button');
+    sellCrossButton.addEventListener('click', () => {
+        const currentCrosses = getTotalCrosses();
+        const quantityToSell = prompt(`판매할 십자가 개수를 입력하세요. (현재 보유: ${currentCrosses}개)`);
+
+        if (quantityToSell === null) return;
+
+        const quantity = parseInt(quantityToSell, 10);
+
+        if (isNaN(quantity) || quantity <= 0) {
+            alert('유효한 숫자를 입력하세요.');
+            return;
+        }
+
+        if (quantity > currentCrosses) {
+            alert('보유한 십자가가 부족합니다.');
+            return;
+        }
+
+        const coinsEarned = quantity * 2;
+        const currentCoins = getTotalCoins();
+
+        setTotalCrosses(currentCrosses - quantity);
+        setTotalCoins(currentCoins + coinsEarned);
+
+        alert(`${quantity}개의 십자가를 판매하여 ${coinsEarned} 코인을 얻었습니다.`);
+        updateShopUI();
+    });
+}
+
+function addGameEventListeners() {
+    if (gameEventListenersAdded) return;
+    // Game control listeners
+    document.addEventListener('mousemove', onMouseMove, false);
+    window.addEventListener('resize', onWindowResize, false);
+    
+    document.addEventListener('keydown', onKeyDown, false);
+    document.addEventListener('contextmenu', onContextMenu, false);
+    gameEventListenersAdded = true;
+}
+
+
+
+// Game state
+let scene, camera, renderer, plane, buildings = [], clock, mouse, targetPosition, playerShield, enemyPlane, ambientLight, directionalLight, mysteryBoxModel, f35EnemyPlaneModel, j36EnemyPlaneModel, su57EnemyPlaneModel, j20EnemyPlaneModel, f15EnemyPlaneModel, f2EnemyPlaneModel, coinModel, usaBackgroundTexture;
+let missiles = [], bombs = [], coins = [], magnets = [], shields = [], enemyMissiles = [], jetEngines = [], crosses = [], holyCrosses = [], explosions = [], mysteryBoxes = [], bombModel;
+let isGameOver = false, isInvincible = false, magnetActive = false, enemyActive = false, speedBoostActive = false, isDay = true, jammingActive = false;
+let gameSpeed = 0.5, magnetEndTime = 0, invincibilityEndTime = 0, enemyEndTime = 0, speedBoostEndTime = 0, lastCycleTime = 0, jammingEndTime = 0;
+let lastShotTime = 0, lastBombTime = 0, lastEnemySpawnTime = 0, lastEnemyShotTime = 0, lastCrossShotTime = 0;
+let lives = 3, coinCount = 0, crossAmmo = 0, gameEventListenersAdded = false, jammingAmmo = 0;
+let selectedMap = 'default';
+let currentLandmark = null;
+
+// Base game values (can be modified by upgrades)
+let initialLives = 3;
+let missileDelay = 300; // milliseconds
+let magnetDuration = 2; // seconds
+let jammingDuration = 10; // seconds
+
+function init() {
+    if (renderer && renderer.domElement) {
+        document.body.removeChild(renderer.domElement);
+    }
+    console.log("init() called.");
+    isGameOver = false; // Set to false when a new game starts
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+    clock = new THREE.Clock();
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 15;
+
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
+    directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    directionalLight.position.set(5, 10, 7.5);
+    scene.add(directionalLight);
+
+    const shieldGeometry = new THREE.SphereGeometry(1.8, 32, 32);
+    const shieldMaterial = new THREE.MeshStandardMaterial({ color: 0x00abff, transparent: true, opacity: 0.4, emissive: 0x00abff, emissiveIntensity: 1 });
+    playerShield = new THREE.Mesh(shieldGeometry, shieldMaterial);
+    playerShield.visible = false;
+    scene.add(playerShield);
+
+    mouse = new THREE.Vector2();
+    targetPosition = new THREE.Vector3();
+
+    createBuildings();
+    createCoins();
+    createMagnets();
+    createShields();
+    createJetEngines();
+    createCrosses();
+    addGameEventListeners();
+    resetGameState();
+    updateHUD();
+    lastBombTime = 0;
+    lastEnemySpawnTime = -20;
+    lastCycleTime = 0;
+
+    loadModels();
+
+    // Make HUD visible when game starts
+    hudElement.style.display = 'block';
+}
+
+function loadModels() {
+    const manager = new THREE.LoadingManager();
+    const gltfLoader = new GLTFLoader(manager); // Declare gltfLoader here
+    const objLoader = new OBJLoader(manager); // Declare objLoader here
+    const textureLoader = new TextureLoader(manager); // Declare textureLoader here
+
+    let f22Loaded = false;
+    let j36Loaded = false;
+    let mysteryBoxLoaded = false;
+    let f35Loaded = false;
+    let su57Loaded = false;
+    let j20Loaded = false;
+    let f15Loaded = false;
+    let f2Loaded = false;
+    let coinLoaded = false;
+    let usaBackgroundLoaded = false;
+    let bombLoaded = false; // Added bombLoaded
+
+    const checkAndStartAnimate = () => {
+        if (f22Loaded && j36Loaded && mysteryBoxLoaded && f35Loaded && su57Loaded && j20Loaded && f15Loaded && f2Loaded && coinLoaded && bombLoaded) { // Added bombLoaded
+            console.log("All models processed, starting game.");
+
+            createBuildings();
+
+            // Select and create the enemy plane after models are loaded
+            const currentTheme = MAP_THEMES[selectedMap];
+            const enemyModelName = currentTheme.enemyModel;
+            let sourceModel;
+
+            if (enemyModelName === 'f35' && f35EnemyPlaneModel) {
+                sourceModel = f35EnemyPlaneModel;
+            } else if (enemyModelName === 'j36' && j36EnemyPlaneModel) {
+                sourceModel = j36EnemyPlaneModel;
+            } else if (enemyModelName === 'su57' && su57EnemyPlaneModel) {
+                sourceModel = su57EnemyPlaneModel;
+            } else if (enemyModelName === 'j20' && j20EnemyPlaneModel) {
+                sourceModel = j20EnemyPlaneModel;
+            } else if (enemyModelName === 'f15' && f15EnemyPlaneModel) {
+                sourceModel = f15EnemyPlaneModel;
+            } else if (enemyModelName === 'f2' && f2EnemyPlaneModel) {
+                sourceModel = f2EnemyPlaneModel;
+            }
+
+            if (sourceModel) {
+                if (enemyPlane) scene.remove(enemyPlane); // Remove previous one if any
+                enemyPlane = sourceModel.clone();
+                if (enemyModelName === 'f35') {
+                    enemyPlane.scale.set(0.03, 0.03, 0.03);
+                } else if (enemyModelName === 'su57') {
+                    enemyPlane.scale.set(1.5, 1.5, 1.5); // Adjusting scale
+                } else if (enemyModelName === 'j20') {
+                    enemyPlane.scale.set(0.1, 0.1, 0.1);
+                } else if (enemyModelName === 'f15') {
+                    enemyPlane.scale.set(20, 20, 20);
+                } else if (enemyModelName === 'f2') {
+                    enemyPlane.scale.set(0.5, 0.5, 0.5);
+                } else { // j36
+                    enemyPlane.scale.set(0.1, 0.1, 0.1);
+                }
+                enemyPlane.visible = false;
+                scene.add(enemyPlane);
+            }
+
+            animate();
+        }
+    };
+
+    // Loader for Player's F-14 GLB
+    gltfLoader.load('f-14_tomcat_-_fighter_jet_-_free.glb', (gltf) => {
+        console.log("Player F-14 GLB loaded.");
+        plane = gltf.scene;
+        plane.scale.set(0.02, 0.02, 0.02); // Initial scale, adjust as needed (even smaller)
+        plane.rotation.y = Math.PI / 2; // Initial rotation, adjust as needed
+        scene.add(plane);
+        f22Loaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load F-14 GLB, using fallback.', error);
+        createFallbackPlane(); // Fallback for player
+        f22Loaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    });
+
+    // Loader for Enemy's J-36
+    objLoader.load('chengdu-j-36/source/Chengdu J-36/Chengdu J-36.obj', (obj) => {
+        console.log("Enemy J-36 loaded.");
+        const material = new THREE.MeshStandardMaterial({ color: 0x8B0000 }); // Dark Red
+        obj.traverse((child) => {
+            if (child.isMesh) {
+                child.material = material;
+            }
+        });
+        j36EnemyPlaneModel = obj; // Assign to global variable
+        j36Loaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load J-36, using fallback.', error);
+        const enemyGeometry = new THREE.ConeGeometry(0.5, 2, 8);
+        const enemyMaterial = new THREE.MeshStandardMaterial({ color: 0x8B0000 });
+        j36EnemyPlaneModel = new THREE.Mesh(enemyGeometry, enemyMaterial); // Assign to global variable
+        j36EnemyPlaneModel.rotation.x = Math.PI / 2;
+        j36Loaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    });
+
+    // Loader for F-35 GLB (for USA map enemy)
+    gltfLoader.load('f-35_lightning_ii_-_fighter_jet_-_free.glb', (gltf) => {
+        console.log("F-35 GLB loaded.");
+        f35EnemyPlaneModel = gltf.scene;
+        f35Loaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load F-35 GLB, using fallback.', error);
+        const enemyGeometry = new THREE.ConeGeometry(0.5, 2, 8);
+        const enemyMaterial = new THREE.MeshStandardMaterial({ color: 0x0000FF }); // Blue fallback
+        f35EnemyPlaneModel = new THREE.Mesh(enemyGeometry, enemyMaterial);
+        f35EnemyPlaneModel.rotation.x = Math.PI / 2;
+        f35Loaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    });
+
+    // Loader for Su-57 GLB (for Russia map enemy)
+    gltfLoader.load('sukhoi_su-57_felon.glb', (gltf) => {
+        console.log("Su-57 GLB loaded.");
+        su57EnemyPlaneModel = gltf.scene;
+        su57Loaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load Su-57 GLB, using fallback.', error);
+        const enemyGeometry = new THREE.ConeGeometry(0.5, 2, 8);
+        const enemyMaterial = new THREE.MeshStandardMaterial({ color: 0xCCCCCC }); // Grey fallback
+        su57EnemyPlaneModel = new THREE.Mesh(enemyGeometry, enemyMaterial);
+        su57EnemyPlaneModel.rotation.x = Math.PI / 2;
+        su57Loaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    });
+
+    // Loader for J-20 GLB (for China map enemy)
+    gltfLoader.load('chengdu_j-20_fighter_v2.glb', (gltf) => {
+        console.log("J-20 GLB loaded.");
+        let mergedGeometry = new THREE.BufferGeometry();
+        const material = new THREE.MeshStandardMaterial({ color: 0xAAAAAA }); // Default material
+
+        gltf.scene.traverse((child) => {
+            if (child.isMesh) {
+                // Apply the child's world transformation to its geometry
+                child.updateWorldMatrix(true, false);
+                let geometry = child.geometry.clone();
+
+                // Convert to non-indexed geometry if it's indexed
+                if (geometry.index) {
+                    geometry = geometry.toNonIndexed();
+                }
+
+                // Remove uv2 attribute if it exists, to ensure compatibility
+                if (geometry.attributes.uv2) {
+                    geometry.deleteAttribute('uv2');
+                }
+
+                geometry.applyMatrix4(child.matrixWorld);
+                // Ensure mergedGeometry is initialized with a valid geometry if it's the first one
+                if (!mergedGeometry.attributes.position) {
+                    mergedGeometry = geometry;
+                } else {
+                    mergedGeometry = BufferGeometryUtils.mergeBufferGeometries([mergedGeometry, geometry]);
+                }
+            }
+        });
+
+        if (mergedGeometry.attributes.position) {
+            j20EnemyPlaneModel = new THREE.Mesh(mergedGeometry, material);
+        } else {
+            j20EnemyPlaneModel = gltf.scene; // Fallback if merging fails or no meshes
+        }
+        j20Loaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load J-20 GLB, using fallback.', error);
+        const enemyGeometry = new THREE.ConeGeometry(0.5, 2, 8);
+        const enemyMaterial = new THREE.MeshStandardMaterial({ color: 0xAA0000 }); // Red fallback
+        j20EnemyPlaneModel = new THREE.Mesh(enemyGeometry, enemyMaterial);
+        j20EnemyPlaneModel.rotation.x = Math.PI / 2;
+        j20Loaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    });
+
+    // Loader for F-15EX GLB (for Korea map enemy)
+    gltfLoader.load('ba_f-15ex_eagle_ii.glb', (gltf) => {
+        console.log("F-15EX GLB loaded.");
+        f15EnemyPlaneModel = gltf.scene;
+        f15Loaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load F-15EX GLB, using fallback.', error);
+        const enemyGeometry = new THREE.ConeGeometry(0.5, 2, 8);
+        const enemyMaterial = new THREE.MeshStandardMaterial({ color: 0x0000AA }); // Blue fallback
+        f15EnemyPlaneModel = new THREE.Mesh(enemyGeometry, enemyMaterial);
+        f15EnemyPlaneModel.rotation.x = Math.PI / 2;
+        f15Loaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    });
+
+    // Loader for F-2 GLB (for Japan map enemy)
+    gltfLoader.load('mitsubishi_f-2_-_fighter_jet_-_free.glb', (gltf) => {
+        console.log("F-2 GLB loaded.");
+        f2EnemyPlaneModel = gltf.scene;
+        f2Loaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load F-2 GLB, using fallback.', error);
+        const enemyGeometry = new THREE.ConeGeometry(0.5, 2, 8);
+        const enemyMaterial = new THREE.MeshStandardMaterial({ color: 0xFF0000 }); // Red fallback
+        f2EnemyPlaneModel = new THREE.Mesh(enemyGeometry, enemyMaterial);
+        f2EnemyPlaneModel.rotation.x = Math.PI / 2;
+        f2Loaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    });
+
+    // Loader for USA Background Texture
+    /*
+    textureLoader.load('스크린샷 2025-10-17 193103.png', (texture) => {
+        console.log("USA Background Texture loaded.");
+        usaBackgroundTexture = texture;
+        usaBackgroundLoaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load USA Background Texture.', error);
+        usaBackgroundLoaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    */
+    usaBackgroundLoaded = true; // Ensure animation starts even if texture is skipped
+
+    // Loader for Coin GLB
+    /*
+    gltfLoader.load('stylized_coin.glb', (gltf) => {
+        console.log("Coin GLB loaded.");
+        coinModel = gltf.scene;
+        coinLoaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load Coin GLB, using fallback.', error);
+        coinLoaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    */
+    coinLoaded = true; // Ensure animation starts even if GLB is skipped
+
+    // Loader for Mystery Box
+    gltfLoader.load('guess_box.glb', (gltf) => {
+        console.log("Mystery Box GLB loaded.");
+        mysteryBoxModel = gltf.scene;
+        createMysteryBoxes();
+        mysteryBoxLoaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load Mystery Box GLB, using fallback.', error);
+        // Create a fallback purple cube
+        const boxGeometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+        const boxMaterial = new THREE.MeshStandardMaterial({ color: 0x9400D3, emissive: 0x9400D3, emissiveIntensity: 1.5 });
+        mysteryBoxModel = new THREE.Mesh(boxGeometry, boxMaterial);
+        mysteryBoxLoaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    });
+
+    // Loader for Bomb GLB
+    gltfLoader.load('bomb.glb', (gltf) => {
+        console.log("Bomb GLB loaded.");
+        bombModel = gltf.scene;
+        bombLoaded = true;
+        checkAndStartAnimate();
+    }, undefined, (error) => {
+        console.error('Failed to load Bomb GLB, using fallback.', error);
+        bombLoaded = true; // Mark as processed even if failed
+        checkAndStartAnimate();
+    });
+}
+
+function createFallbackPlane() {
+    const geometry = new THREE.ConeGeometry(0.5, 2, 8);
+    const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+    plane = new THREE.Mesh(geometry, material);
+    plane.rotation.x = Math.PI / 2;
+    scene.add(plane);
+}
+
+function createBuildings() {
+    // Clear existing buildings
+    buildings.forEach(b => scene.remove(b));
+    buildings = [];
+
+    const currentTheme = MAP_THEMES[selectedMap];
+    const buildingColors = currentTheme.colors;
+    const buildingCount = currentTheme.buildingCount;
+
+    // Create regular buildings
+    for (let i = 0; i < buildingCount; i++) {
+        const height = 20; // Fixed height for all buildings
+        const geometry = new THREE.BoxGeometry(4, height, 4);
+        const material = new THREE.MeshStandardMaterial({ color: buildingColors[Math.floor(Math.random() * buildingColors.length)] });
+        const building = new THREE.Mesh(geometry, material);
+        resetBuilding(building);
+        building.position.z = Math.random() * -200;
+        buildings.push(building);
+        scene.add(building);
+    }
+
+    // Create landmark based on theme
+    if (currentTheme.landmark) {
+        let landmarkMesh;
+        switch (currentTheme.landmark) {
+            case 'statue_of_liberty':
+                // No landmark for USA map
+                break;
+            case 'great_wall':
+                // Long, winding wall of cubes
+                const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Brown
+                const wallHeight = 5;
+                const wallWidth = 3;
+                const wallLength = 100;
+                const segmentCount = 20;
+                const wallGroup = new THREE.Group();
+                for (let i = 0; i < segmentCount; i++) {
+                    const segmentGeometry = new THREE.BoxGeometry(wallWidth, wallHeight, wallLength / segmentCount);
+                    const segment = new THREE.Mesh(segmentGeometry, wallMaterial);
+                    segment.position.z = (i - segmentCount / 2) * (wallLength / segmentCount);
+                    segment.position.x = Math.sin(i * 0.5) * 10; // Winding path
+                    wallGroup.add(segment);
+                }
+                wallGroup.position.set(0, wallHeight / 2, -100);
+                landmarkMesh = wallGroup;
+                break;
+            case 'seoul_tower':
+                // Tall tower with a wider base
+                const towerGroup = new THREE.Group();
+                const towerBaseGeo = new THREE.CylinderGeometry(4, 6, 10, 32);
+                const towerMidGeo = new THREE.CylinderGeometry(3, 4, 15, 32);
+                const towerTopGeo = new THREE.CylinderGeometry(2, 3, 10, 32);
+                const towerMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 }); // Dark grey
+                const towerBase = new THREE.Mesh(towerBaseGeo, towerMaterial);
+                const towerMid = new THREE.Mesh(towerMidGeo, towerMaterial);
+                const towerTop = new THREE.Mesh(towerTopGeo, towerMaterial);
+
+                towerBase.position.y = 5;
+                towerMid.position.y = 10 + 7.5;
+                towerTop.position.y = 10 + 15 + 5;
+
+                towerGroup.add(towerBase, towerMid, towerTop);
+                towerGroup.position.set(0, 0, -100);
+                landmarkMesh = towerGroup;
+                break;
+            case 'torii_gate':
+                // Red Torii gate
+                const toriiMaterial = new THREE.MeshStandardMaterial({ color: 0xBC002D }); // Red
+                const pillarGeo = new THREE.BoxGeometry(1, 15, 1);
+                const crossbarGeo = new THREE.BoxGeometry(15, 1, 1);
+                const topbarGeo = new THREE.BoxGeometry(18, 1, 1);
+
+                const pillar1 = new THREE.Mesh(pillarGeo, toriiMaterial);
+                pillar1.position.set(-6, 7.5, 0);
+                const pillar2 = new THREE.Mesh(pillarGeo, toriiMaterial);
+                pillar2.position.set(6, 7.5, 0);
+                const crossbar = new THREE.Mesh(crossbarGeo, toriiMaterial);
+                crossbar.position.set(0, 12, 0);
+                const topbar = new THREE.Mesh(topbarGeo, toriiMaterial);
+                topbar.position.set(0, 14, 0);
+
+                const toriiGroup = new THREE.Group();
+                toriiGroup.add(pillar1, pillar2, crossbar, topbar);
+                toriiGroup.position.set(0, 0, -100);
+                landmarkMesh = toriiGroup;
+                break;
+            case 'st_basils_cathedral':
+                // Colorful domes for St. Basil's Cathedral
+                const cathedralGroup = new THREE.Group();
+                const domeMaterial = new THREE.MeshStandardMaterial({ color: 0x800080 }); // Purple
+                const domeGeometry = new THREE.SphereGeometry(3, 32, 32, 0, Math.PI * 2, 0, Math.PI / 2);
+
+                const colors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF];
+
+                for (let i = 0; i < 5; i++) {
+                    const dome = new THREE.Mesh(domeGeometry, new THREE.MeshStandardMaterial({ color: colors[i] }));
+                    dome.position.set((i - 2) * 5, 15, 0);
+                    cathedralGroup.add(dome);
+                }
+                const baseGeometry = new THREE.BoxGeometry(30, 10, 10);
+                const baseMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 }); // Brown
+                const base = new THREE.Mesh(baseGeometry, baseMaterial);
+                base.position.y = 5;
+                cathedralGroup.add(base);
+
+                cathedralGroup.position.set(0, 0, -100);
+                landmarkMesh = cathedralGroup;
+                break;
+        }
+        if (landmarkMesh) {
+            scene.add(landmarkMesh);
+            currentLandmark = landmarkMesh;
+        }
+    }
+}
+
+function resetBuilding(building) {
+    building.position.x = (Math.random() - 0.5) * 50;
+    // Add robust check for geometry parameters
+    if (building.geometry && building.geometry.parameters && typeof building.geometry.parameters.height !== 'undefined') {
+        building.position.y = -building.geometry.parameters.height / 2;
+    } else {
+        // Fallback for objects without expected geometry parameters
+        console.warn("Attempted to reset a building without expected geometry parameters:", building);
+        building.position.y = 0; // Default to ground level
+    }
+    building.position.z = -200;
+    building.visible = true;
+}
+
+function createCoins() {
+    coins = [];
+    if (!coinModel) { // Fallback if model not loaded
+        const coinMaterial = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.5, roughness: 0.5 });
+        const coinGeometry = new THREE.TorusGeometry(0.5, 0.2, 8, 16);
+        for (let i = 0; i < 20; i++) {
+            const coin = new THREE.Mesh(coinGeometry, coinMaterial);
+            resetCoin(coin);
+            coin.position.z = Math.random() * -200;
+            coins.push(coin);
+            scene.add(coin);
+        }
+    } else {
+        for (let i = 0; i < 20; i++) {
+            const coin = coinModel.clone();
+            coin.scale.set(5, 5, 5); // Increased scale for visibility
+            resetCoin(coin);
+            coin.position.z = Math.random() * -200;
+            coins.push(coin);
+            scene.add(coin);
+        }
+    }
+}
+
+function resetCoin(coin) {
+    coin.position.x = (Math.random() - 0.5) * 30;
+    coin.position.y = (Math.random() - 0.5) * 10;
+    coin.position.z = -100 - Math.random() * 100;
+    coin.visible = true;
+}
+
+function createMagnetMesh() {
+    const magnetGroup = new THREE.Group();
+    const redMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+    const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+    const barGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1.5, 12);
+    const leftBar = new THREE.Mesh(barGeometry, redMaterial);
+    leftBar.position.x = -0.5;
+    const rightBar = new THREE.Mesh(barGeometry, whiteMaterial);
+    rightBar.position.x = 0.5;
+    const curveGeometry = new THREE.TorusGeometry(0.5, 0.2, 12, 24, Math.PI);
+    const topCurve = new THREE.Mesh(curveGeometry, redMaterial);
+    topCurve.rotation.z = Math.PI;
+    topCurve.position.y = 0.75;
+    magnetGroup.add(leftBar, rightBar, topCurve);
+    magnetGroup.scale.set(1.5, 1.5, 1.5);
+    return magnetGroup;
+}
+
+function createMagnets() {
+    magnets = [];
+    for (let i = 0; i < 2; i++) {
+        const magnet = createMagnetMesh();
+        resetMagnet(magnet);
+        magnet.position.z = -150 - Math.random() * 150;
+        magnets.push(magnet);
+        scene.add(magnet);
+    }
+}
+
+function resetMagnet(magnet) {
+    magnet.position.x = (Math.random() - 0.5) * 30;
+    magnet.position.y = (Math.random() - 0.5) * 10;
+    magnet.position.z = -200 - Math.random() * 200;
+    magnet.visible = true;
+}
+
+function createShieldMesh() {
+    const shieldMaterial = new THREE.MeshStandardMaterial({ color: 0x00abff, transparent: true, opacity: 0.6, emissive: 0x00abff, emissiveIntensity: 2 });
+    const shieldGeometry = new THREE.IcosahedronGeometry(1, 1);
+    return new THREE.Mesh(shieldGeometry, shieldMaterial);
+}
+
+function createShields() {
+    shields = [];
+    for (let i = 0; i < 2; i++) {
+        const shield = createShieldMesh();
+        resetShield(shield);
+        shield.position.z = -150 - Math.random() * 150;
+        shields.push(shield);
+        scene.add(shield);
+    }
+}
+
+function resetShield(shield) {
+    shield.position.x = (Math.random() - 0.5) * 30;
+    shield.position.y = (Math.random() - 0.5) * 10;
+    shield.position.z = -200 - Math.random() * 200;
+    shield.visible = true;
+}
+
+function createJetEngineMesh() {
+    const group = new THREE.Group();
+    const bodyMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 0.8, roughness: 0.4 });
+    const flameMat = new THREE.MeshStandardMaterial({ color: 0xffa500, emissive: 0xffa500, emissiveIntensity: 2 });
+    const bodyGeo = new THREE.CylinderGeometry(0.4, 0.2, 1.5, 12);
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    const flameGeo = new THREE.ConeGeometry(0.2, 0.5, 12);
+    const flame = new THREE.Mesh(flameGeo, flameMat);
+    flame.position.y = -1.0;
+    group.add(body, flame);
+    group.rotation.x = Math.PI / 2;
+    return group;
+}
+
+function createJetEngines() {
+    jetEngines = [];
+    for (let i = 0; i < 2; i++) {
+        const jet = createJetEngineMesh();
+        resetJetEngine(jet);
+        jet.position.z = -150 - Math.random() * 150;
+        jetEngines.push(jet);
+        scene.add(jet);
+    }
+}
+
+function resetJetEngine(jet) {
+    jet.position.x = (Math.random() - 0.5) * 30;
+    jet.position.y = (Math.random() - 0.5) * 10;
+    jet.position.z = -200 - Math.random() * 200;
+    jet.visible = true;
+}
+
+function createCrossMesh() {
+    const group = new THREE.Group();
+    const material = new THREE.MeshStandardMaterial({ color: 0x8B4513, emissive: 0x5a2d0c, emissiveIntensity: 0.5 });
+    const bar1Geo = new THREE.BoxGeometry(0.3, 1.5, 0.3);
+    const bar1 = new THREE.Mesh(bar1Geo, material);
+    const bar2Geo = new THREE.BoxGeometry(1.5, 0.3, 0.3);
+    const bar2 = new THREE.Mesh(bar2Geo, material);
+    group.add(bar1, bar2);
+    group.scale.set(1.2, 1.2, 1.2);
+    return group;
+}
+
+function createCrosses() {
+    crosses = [];
+    for (let i = 0; i < 2; i++) {
+        const cross = createCrossMesh();
+        resetCross(cross);
+        cross.position.z = -200 - Math.random() * 200;
+        crosses.push(cross);
+        scene.add(cross);
+    }
+}
+
+function resetCross(cross) {
+    cross.position.x = (Math.random() - 0.5) * 30;
+    cross.position.y = (Math.random() - 0.5) * 10;
+    cross.position.z = -250 - Math.random() * 200;
+    cross.visible = true;
+}
+
+function createMysteryBoxMesh() {
+    if (!mysteryBoxModel) return null; // Model not loaded yet
+    const box = mysteryBoxModel.clone();
+    box.scale.set(0.01, 0.01, 0.01); // Adjust scale as needed
+    return box;
+}
+
+function createMysteryBoxes() {
+    mysteryBoxes = [];
+    for (let i = 0; i < 2; i++) {
+        const box = createMysteryBoxMesh();
+        if (box) { // Check if model was loaded and cloned
+            resetMysteryBox(box);
+            box.position.z = -250 - Math.random() * 250;
+            mysteryBoxes.push(box);
+            scene.add(box);
+        }
+    }
+}
+
+function resetMysteryBox(box) {
+    box.position.x = (Math.random() - 0.5) * 30;
+    box.position.y = (Math.random() - 0.5) * 10;
+    box.position.z = -300 - Math.random() * 200;
+    box.visible = true;
+}
+
+function shootMissile() {
+    if (Date.now() - lastShotTime < missileDelay || !plane) return;
+    lastShotTime = Date.now();
+    const missileGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 8);
+    const missileMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+    const missile = new THREE.Mesh(missileGeometry, missileMaterial);
+    missile.position.copy(plane.position);
+    missile.rotation.x = Math.PI / 2;
+    missiles.push(missile);
+    scene.add(missile);
+}
+
+function shootCross() {
+    if (crossAmmo <= 0 || Date.now() - lastCrossShotTime < 1000 || !plane) return;
+    lastCrossShotTime = Date.now();
+    crossAmmo--;
+    updateHUD();
+
+    const holyCross = createCrossMesh();
+    holyCross.traverse((child) => {
+        if (child.isMesh) {
+            child.material = new THREE.MeshStandardMaterial({ color: 0xCD853F, emissive: 0xCD853F, emissiveIntensity: 1 });
+        }
+    });
+    holyCross.position.copy(plane.position);
+    holyCrosses.push(holyCross);
+    scene.add(holyCross);
+}
+
+function shootEnemyMissile() {
+    if (!enemyActive || !enemyPlane || Date.now() - lastEnemyShotTime < 1000 || jammingActive) return; // Added jammingActive check
+    lastEnemyShotTime = Date.now();
+    const missileMaterial = new THREE.MeshStandardMaterial({ color: 0xff4500 });
+    const missileGeometry = new THREE.SphereGeometry(0.3, 12, 12);
+    const missile = new THREE.Mesh(missileGeometry, missileMaterial);
+
+    const currentTheme = MAP_THEMES[selectedMap];
+    const missileOffset = currentTheme.missileOffset || new THREE.Vector3(0, 0, -2); // Use theme-specific offset or default
+
+    missile.position.copy(enemyPlane.position);
+    missileOffset.applyQuaternion(enemyPlane.quaternion);
+    missile.position.add(missileOffset);
+
+    const direction = new THREE.Vector3();
+    direction.subVectors(plane.position, missile.position).normalize();
+    missile.userData.velocity = direction;
+    enemyMissiles.push(missile);
+    scene.add(missile);
+}
+
+function spawnBombs() {
+    for (let i = 0; i < 3; i++) {
+        let bomb;
+        if (bombModel) {
+            bomb = bombModel.clone();
+            bomb.scale.set(0.5, 0.5, 0.5); // Adjust scale as needed for the GLB model
+        } else {
+            // Fallback to sphere if bombModel is not loaded
+            const bombGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+            const bombMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+            bomb = new THREE.Mesh(bombGeometry, bombMaterial.clone());
+        }
+        bomb.position.x = (Math.random() - 0.5) * 25;
+        bomb.position.y = 20;
+        bomb.position.z = (Math.random() - 0.5) * 20;
+        bombs.push(bomb);
+        scene.add(bomb);
+    }
+}
+
+
+
+function triggerMysteryReward() {
+    const rewards = ['coins', 'shield', 'speed', 'cross'];
+    const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
+    const elapsedTime = clock.getElapsedTime();
+
+    let rewardText = '';
+
+    switch (randomReward) {
+        case 'coins':
+            coinCount += 10;
+            rewardText = '+10 Tomcat Credit!';
+            break;
+        case 'shield':
+            isInvincible = true;
+            invincibilityEndTime = elapsedTime + 10; // 10 seconds of shield
+            rewardText = '10초 무적!';
+            break;
+        case 'speed':
+            speedBoostActive = true;
+            speedBoostEndTime = elapsedTime + 10;
+            rewardText = '10초 스피드 부스트!';
+            break;
+        case 'cross':
+            crossAmmo += 3;
+            rewardText = '+3 십자가 폭탄!';
+            break;
+    }
+    updateHUD();
+    showRewardMessage(rewardText);
+}
+
+function showRewardMessage(message) {
+    const rewardElement = document.getElementById('reward-message');
+    if (rewardElement) {
+        rewardElement.textContent = message;
+        rewardElement.style.display = 'block';
+        setTimeout(() => {
+            rewardElement.style.display = 'none';
+        }, 2000); // Hide after 2 seconds
+    }
+}
+
+function onKeyDown(event) {
+    if (isGameOver) return;
+    if (event.code === 'Space') shootMissile();
+    if (event.code === 'KeyQ' && getUpgradeStatus(UPGRADE_KEYS.JAMMING_ITEM) && jammingAmmo > 0 && !jammingActive) {
+        jammingActive = true;
+        jammingEndTime = clock.getElapsedTime() + jammingDuration;
+        jammingAmmo--;
+        updateHUD();
+        console.log("Jamming activated!");
+    }
+}
+
+function onContextMenu(event) {
+    event.preventDefault();
+    if (isGameOver) return;
+    shootCross();
+}
+
+function onMouseMove(event) {
+    if (!mouse) return;
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+function onWindowResize() {
+    if (!camera || !renderer) return;
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function updateHUD() {
+    livesCountElement.innerHTML = '';
+    for (let i = 0; i < lives; i++) {
+        const heart = document.createElement('span');
+        heart.textContent = '❤️';
+        heart.className = 'heart';
+        livesCountElement.appendChild(heart);
+    }
+
+    if (coinIconsElement) {
+        const bigCoins = Math.floor(coinCount / 10);
+        const smallCoins = coinCount % 10;
+        let coinHTML = '';
+        for (let i = 0; i < bigCoins; i++) coinHTML += '💰';
+        for (let i = 0; i < smallCoins; i++) coinHTML += '🪙';
+        coinIconsElement.innerHTML = coinHTML;
+    }
+
+    let crossAmmoElement = document.getElementById('cross-ammo-count');
+    if (!crossAmmoElement) {
+        const crossAmmoSpan = document.createElement('span');
+        crossAmmoSpan.style.marginLeft = '20px';
+        crossAmmoSpan.innerHTML = 'Crosses: <span id="cross-ammo-count">0</span>';
+        hudElement.appendChild(crossAmmoSpan);
+        crossAmmoElement = document.getElementById('cross-ammo-count');
+    }
+    crossAmmoElement.textContent = crossAmmo;
+
+    let jammingAmmoElement = document.getElementById('jamming-ammo-count');
+    if (!jammingAmmoElement) {
+        const jammingAmmoSpan = document.createElement('span');
+        jammingAmmoSpan.style.marginLeft = '20px';
+        jammingAmmoSpan.innerHTML = 'Jamming: <span id="jamming-ammo-count">0</span>';
+        hudElement.appendChild(jammingAmmoSpan);
+        jammingAmmoElement = document.getElementById('jamming-ammo-count');
+    }
+    jammingAmmoElement.textContent = jammingAmmo;
+}
+
+function handlePlayerHit() {
+    if (isInvincible) return;
+    lives--;
+    updateHUD();
+    isInvincible = true;
+    invincibilityEndTime = clock.getElapsedTime() + 2;
+    if (lives <= 0) {
+        isGameOver = true;
+        gameOverElement.style.display = 'block';
+        infoElement.style.display = 'none';
+
+        // Add session coins to total coins in localStorage
+        const currentTotalCoins = parseInt(localStorage.getItem('totalCoins') || '0');
+        const newTotalCoins = currentTotalCoins + coinCount;
+        localStorage.setItem('totalCoins', newTotalCoins);
+
+        // Save remaining crosses
+        setTotalCrosses(crossAmmo);
+    }
+}
+
+function triggerExplosion(position, radius) {
+    const explosionGeometry = new THREE.SphereGeometry(radius, 32, 32);
+    const explosionMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
+    const explosion = new THREE.Mesh(explosionGeometry, explosionMaterial);
+    explosion.position.copy(position);
+    explosions.push({ mesh: explosion, startTime: clock.getElapsedTime() });
+    scene.add(explosion);
+
+    if (enemyActive && enemyPlane && enemyPlane.position.distanceTo(position) < radius) {
+        enemyActive = false;
+        enemyPlane.visible = false;
+    }
+
+    buildings.forEach(b => {
+        if (b.visible && b.position.distanceTo(position) < radius) {
+            b.visible = false;
+        }
+    });
+}
+
+function setDay() {
+    scene.background.set(0x87ceeb);
+    ambientLight.intensity = 0.8;
+    directionalLight.intensity = 1.0;
+    isDay = true;
+
+    const allGlowArrays = [missiles, coins, shields, magnets, jetEngines, crosses, holyCrosses, bombs, enemyMissiles];
+    const allGlowObjects = [plane, enemyPlane];
+    allGlowArrays.forEach(arr => allGlowObjects.push(...arr));
+
+    allGlowObjects.forEach(obj => {
+        if (obj) {
+            obj.traverse(child => {
+                if (child.isMesh && child.material && child.userData.originalEmissive !== undefined) {
+                    child.material.emissive.setHex(child.userData.originalEmissive);
+                    child.material.emissiveIntensity = child.userData.originalIntensity;
+                }
+            });
+        }
+    });
+}
+
+function setNight() {
+    scene.background.set(0x000033);
+    ambientLight.intensity = 0.2;
+    directionalLight.intensity = 0.3;
+    isDay = false;
+
+    const allGlowArrays = [missiles, coins, shields, magnets, jetEngines, crosses, holyCrosses, bombs, enemyMissiles];
+    const allGlowObjects = [plane, enemyPlane];
+    allGlowArrays.forEach(arr => allGlowObjects.push(...arr));
+
+    allGlowObjects.forEach(obj => {
+        if (obj) {
+            obj.traverse(child => {
+                if (child.isMesh && child.material) {
+                    if (child.userData.originalEmissive === undefined) {
+                        child.userData.originalEmissive = child.material.emissive.getHex();
+                        child.userData.originalIntensity = child.material.emissiveIntensity;
+                    }
+                    child.material.emissive.copy(child.material.color);
+                    child.material.emissiveIntensity = 1.5;
+                }
+            });
+        }
+    });
+}
+
+function resetGameState() {
+    // Clear buildings array before iterating or resetting
+    buildings.forEach(b => scene.remove(b)); // Remove from scene
+    buildings = []; // Clear the array
+
+    coins.forEach(resetCoin);
+    magnets.forEach(resetMagnet);
+    shields.forEach(resetShield);
+    jetEngines.forEach(resetJetEngine);
+    crosses.forEach(resetCross);
+
+    if (currentLandmark) {
+        scene.remove(currentLandmark);
+        currentLandmark = null;
+    }
+    mysteryBoxes.forEach(b => scene.remove(b));
+    missiles.forEach(m => scene.remove(m));
+    bombs.forEach(b => scene.remove(b));
+    enemyMissiles.forEach(em => scene.remove(em));
+    holyCrosses.forEach(hc => scene.remove(hc));
+    explosions.forEach(ex => scene.remove(ex.mesh));
+    mysteryBoxes = [];
+    missiles = [];
+    bombs = [];
+    enemyMissiles = [];
+    holyCrosses = [];
+    explosions = [];
+
+    // Apply upgrades
+    lives = getUpgradeStatus(UPGRADE_KEYS.EXTRA_LIFE) ? initialLives + 1 : initialLives;
+    missileDelay = getUpgradeStatus(UPGRADE_KEYS.MISSILE_FIRERATE) ? 200 : 300; // 100ms faster
+    magnetDuration = getUpgradeStatus(UPGRADE_KEYS.MAGNET_DURATION) ? 4 : 2; // 2 seconds longer
+    jammingAmmo = getUpgradeStatus(UPGRADE_KEYS.JAMMING_ITEM) ? 1 : 0; // 1 use if purchased
+
+    coinCount = 0;
+    crossAmmo = getTotalCrosses(); // Load saved crosses
+    jammingActive = false;
+    jammingEndTime = 0;
+    updateHUD();
+
+    if (plane) plane.position.set(0, 0, 0);
+    targetPosition.set(0, 0, 0);
+    // isGameOver = false; // Removed: Managed by init() and home button
+    isInvincible = false;
+    magnetActive = false;
+    enemyActive = false;
+    speedBoostActive = false;
+
+    if (enemyPlane) scene.remove(enemyPlane); // Remove old enemy plane if exists
+
+    if (selectedMap === 'usa' && usaBackgroundTexture) {
+        scene.background = usaBackgroundTexture;
+    } else {
+        setDay(); // Default day/night cycle
+    }
+    lastCycleTime = 0;
+
+    if (plane) plane.visible = true;
+    gameOverElement.style.display = 'none';
+    infoElement.style.display = 'block';
+    gameSpeed = MAP_THEMES[selectedMap].initialGameSpeed;
+}
+
+function animate() {
+    if (isGameOver) {
+        return;
+    }
+    requestAnimationFrame(animate);
+
+    const delta = clock.getDelta();
+    const elapsedTime = clock.getElapsedTime();
+    gameSpeed += 0.0001;
+
+    if (!plane || !enemyPlane) return; // Wait for both models to load
+
+    if (elapsedTime - lastCycleTime > 120) {
+        if (isDay) setNight();
+        else setDay();
+        lastCycleTime = elapsedTime;
+    }
+
+    if (isInvincible && elapsedTime > invincibilityEndTime) isInvincible = false;
+    if (magnetActive && elapsedTime > magnetEndTime) magnetActive = false;
+    if (speedBoostActive && elapsedTime > speedBoostEndTime) speedBoostActive = false;
+    if (jammingActive && elapsedTime > jammingEndTime) {
+        jammingActive = false;
+        console.log("Jamming deactivated!");
+    }
+
+    let effectiveGameSpeed = gameSpeed;
+    if (speedBoostActive) {
+        effectiveGameSpeed *= 2;
+    }
+
+    if (elapsedTime - lastBombTime > 12) {
+        spawnBombs();
+        lastBombTime = elapsedTime;
+    }
+    if (enemyActive && elapsedTime > enemyEndTime) {
+        enemyActive = false;
+        enemyPlane.visible = false;
+    }
+    if (!enemyActive && elapsedTime - lastEnemySpawnTime > 30) {
+        enemyActive = true;
+        enemyPlane.visible = true;
+        enemyPlane.position.set((Math.random() - 0.5) * 20, (Math.random() * 10) + 5, -60);
+        lastEnemySpawnTime = elapsedTime;
+        enemyEndTime = elapsedTime + 5;
+    }
+
+    playerShield.visible = isInvincible;
+    if (isInvincible) playerShield.position.copy(plane.position);
+    targetPosition.x = mouse.x * 10;
+    targetPosition.y = mouse.y * 5;
+    plane.position.lerp(targetPosition, 0.1);
+    const planeBox = new THREE.Box3().setFromObject(plane);
+
+    if (enemyActive) {
+        // 1. Calculate direction and move the enemy
+        const moveDirection = new THREE.Vector3();
+        moveDirection.subVectors(plane.position, enemyPlane.position).normalize();
+        enemyPlane.position.add(moveDirection.multiplyScalar(delta * 15 * effectiveGameSpeed));
+
+        // 2. Calculate rotation angle to face the player
+        const angle = Math.atan2(moveDirection.x, moveDirection.z);
+
+        // 3. Apply rotation, correcting for the model's default orientation
+        const enemyModelName = MAP_THEMES[selectedMap].enemyModel;
+        if (enemyModelName === 'f35') {
+            // These models' "forward" is likely +X, so we subtract 90 degrees from the angle
+            enemyPlane.rotation.y = angle - Math.PI / 2;
+        } else if (enemyModelName === 'f2') {
+            enemyPlane.rotation.y = angle - Math.PI / 2;
+        } else if (enemyModelName === 'su57') {
+            // This model's "forward" is likely -X, so we add 90 degrees to the angle
+            enemyPlane.rotation.y = angle + Math.PI / 2;
+        } else {
+            // This model's "forward" is likely +Z, so no correction is needed
+            enemyPlane.rotation.y = angle;
+        }
+
+        shootEnemyMissile();
+    }
+
+    buildings.forEach(b => {
+        b.position.z += delta * 30 * effectiveGameSpeed;
+        if (b.position.z > camera.position.z) resetBuilding(b);
+        if (b.visible && planeBox.intersectsBox(new THREE.Box3().setFromObject(b))) handlePlayerHit();
+    });
+
+    shields.forEach(s => {
+        s.rotation.y += delta;
+        s.position.z += delta * 30 * effectiveGameSpeed;
+        if (s.position.z > camera.position.z) resetShield(s);
+        if (s.visible && planeBox.intersectsBox(new THREE.Box3().setFromObject(s))) {
+            resetShield(s);
+            isInvincible = true;
+            invincibilityEndTime = elapsedTime + 5;
+        }
+    });
+
+    magnets.forEach(m => {
+        m.position.z += delta * 30 * effectiveGameSpeed;
+        if (m.position.z > camera.position.z) resetMagnet(m);
+        if (m.visible && planeBox.intersectsBox(new THREE.Box3().setFromObject(m))) {
+            resetMagnet(m);
+            magnetActive = true;
+            magnetEndTime = elapsedTime + magnetDuration; // Use upgraded duration
+        }
+    });
+
+    jetEngines.forEach(jet => {
+        jet.rotation.z += delta * 5;
+        jet.position.z += delta * 30 * effectiveGameSpeed;
+        if (jet.position.z > camera.position.z) resetJetEngine(jet);
+        if (jet.visible && planeBox.intersectsBox(new THREE.Box3().setFromObject(jet))) {
+            resetJetEngine(jet);
+            speedBoostActive = true;
+            speedBoostEndTime = elapsedTime + 10;
+        }
+    });
+
+    coins.forEach(c => {
+        if (magnetActive) {
+            const distanceToPlane = c.position.distanceTo(plane.position);
+            if (distanceToPlane < 15) c.position.lerp(plane.position, 0.1);
+        }
+        c.rotation.y += delta;
+        c.position.z += delta * 30 * effectiveGameSpeed;
+        if (c.position.z > camera.position.z) resetCoin(c);
+        if (c.visible && planeBox.intersectsBox(new THREE.Box3().setFromObject(c))) {
+            resetCoin(c);
+            coinCount++;
+            updateHUD();
+        }
+    });
+    
+    crosses.forEach(c => {
+        c.rotation.x += delta;
+        c.rotation.y += delta;
+        c.position.z += delta * 30 * effectiveGameSpeed;
+        if (c.position.z > camera.position.z) resetCross(c);
+        if (c.visible && planeBox.intersectsBox(new THREE.Box3().setFromObject(c))) {
+            resetCross(c);
+            crossAmmo++;
+            updateHUD();
+        }
+    });
+
+    mysteryBoxes.forEach(box => {
+        box.rotation.y += delta * 0.5;
+        box.position.z += delta * 30 * effectiveGameSpeed;
+        if (box.position.z > camera.position.z) {
+            resetMysteryBox(box);
+        }
+        if (box.visible && planeBox.intersectsBox(new THREE.Box3().setFromObject(box))) {
+            resetMysteryBox(box);
+            triggerMysteryReward();
+        }
+    });
+
+    for (let i = holyCrosses.length - 1; i >= 0; i--) {
+        const hc = holyCrosses[i];
+        hc.position.z -= delta * 80;
+        hc.rotation.z += delta * 5;
+        if (hc.position.z < -200) {
+            scene.remove(hc);
+            holyCrosses.splice(i, 1);
+            continue;
+        }
+
+        const explosionRadius = 10;
+        let exploded = false;
+
+        if (enemyActive && enemyPlane && hc.position.distanceTo(enemyPlane.position) < explosionRadius) {
+            exploded = true;
+        } else {
+            for (const b of buildings) {
+                if (b.visible && hc.position.distanceTo(b.position) < explosionRadius) {
+                    exploded = true;
+                    break;
+                }
+            }
+        }
+
+        if (exploded) {
+            triggerExplosion(hc.position, explosionRadius);
+            scene.remove(hc);
+            holyCrosses.splice(i, 1);
+            continue;
+        }
+    }
+
+    for (let i = explosions.length - 1; i >= 0; i--) {
+        const ex = explosions[i];
+        const lifeTime = elapsedTime - ex.startTime;
+        if (lifeTime > 0.5) {
+            scene.remove(ex.mesh);
+            explosions.splice(i, 1);
+        } else {
+            ex.mesh.scale.multiplyScalar(1 + delta * 5);
+            ex.mesh.material.opacity = 1 - (lifeTime / 0.5);
+        }
+    }
+
+    for (let i = missiles.length - 1; i >= 0; i--) {
+        const m = missiles[i];
+        m.position.z -= delta * 100;
+        if (m.position.z < -200) { scene.remove(m); missiles.splice(i, 1); continue; }
+        const mBox = new THREE.Box3().setFromObject(m);
+        if (enemyActive && enemyPlane && enemyPlane.visible && mBox.intersectsBox(new THREE.Box3().setFromObject(enemyPlane))) {
+            enemyActive = false;
+            enemyPlane.visible = false;
+            scene.remove(m);
+            missiles.splice(i, 1);
+            continue;
+        }
+        for (let j = buildings.length - 1; j >= 0; j--) {
+            const b = buildings[j];
+            if (b.visible && mBox.intersectsBox(new THREE.Box3().setFromObject(b))) {
+                scene.remove(m);
+                missiles.splice(i, 1);
+                b.visible = false;
+                break;
+            }
+        }
+    }
+
+    for (let i = enemyMissiles.length - 1; i >= 0; i--) {
+        const em = enemyMissiles[i];
+        em.position.add(em.userData.velocity.clone().multiplyScalar(delta * 50));
+        if (em.position.z > camera.position.z) { scene.remove(em); enemyMissiles.splice(i, 1); continue; }
+        if (planeBox.intersectsSphere(new THREE.Sphere(em.position, 0.3))) {
+            handlePlayerHit();
+            scene.remove(em);
+            enemyMissiles.splice(i, 1);
+        }
+    }
+
+    for (let i = bombs.length - 1; i >= 0; i--) {
+        const b = bombs[i];
+        b.position.y -= delta * 5;
+        if (b.position.y < -10) { scene.remove(b); bombs.splice(i, 1); continue; }
+        let bombRadius;
+        if (b.geometry && b.geometry.parameters && typeof b.geometry.parameters.radius !== 'undefined') {
+            bombRadius = b.geometry.parameters.radius;
+        } else if (b.children && b.children.length > 0) { // Assuming GLTF model has children
+            const boundingBox = new THREE.Box3().setFromObject(b);
+            bombRadius = boundingBox.getSize(new THREE.Vector3()).length() / 2; // Approximate radius from bounding box
+        } else {
+            bombRadius = 0.5; // Default fallback radius
+        }
+
+        if (planeBox.intersectsSphere(new THREE.Sphere(b.position, bombRadius))) {
+            handlePlayerHit();
+            scene.remove(b);
+            bombs.splice(i, 1);
+        }
+    }
+
+    renderer.render(scene, camera);
+}
+setupHomeScreenEventListeners();
+
+const loginScreen = document.getElementById('login-screen');
+const signupScreen = document.getElementById('signup-screen');
+const loginButton = document.getElementById('login-button');
+const gotoSignupButton = document.getElementById('goto-signup-button');
+const signupButton = document.getElementById('signup-button');
+const backToLoginButton = document.getElementById('back-to-login-button');
+const usernameInput = document.getElementById('username-input');
+const passwordInput = document.getElementById('password-input');
+const newUsernameInput = document.getElementById('new-username-input');
+const newPasswordInput = document.getElementById('new-password-input');
+const userWelcome = document.getElementById('user-welcome');
+let username = '';
+
+// NOTE: Storing passwords in localStorage is not secure. This is for demonstration purposes only.
+let users = JSON.parse(localStorage.getItem('users')) || [];
+
+gotoSignupButton.addEventListener('click', () => {
+    loginScreen.style.display = 'none';
+    signupScreen.style.display = 'flex';
+});
+
+backToLoginButton.addEventListener('click', () => {
+    signupScreen.style.display = 'none';
+    loginScreen.style.display = 'flex';
+});
+
+signupButton.addEventListener('click', () => {
+    const newUsername = newUsernameInput.value;
+    const newPassword = newPasswordInput.value;
+
+    if (newUsername && newPassword) {
+        if (users.find(user => user.username === newUsername)) {
+            alert('이미 존재하는 사용자 이름입니다.');
+        } else {
+            users.push({ username: newUsername, password: newPassword });
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('회원가입에 성공했습니다! 로그인해주세요.');
+            signupScreen.style.display = 'none';
+            loginScreen.style.display = 'flex';
+        }
+    } else {
+        alert('사용자 이름과 비밀번호를 입력하세요.');
+    }
+});
+
+loginButton.addEventListener('click', () => {
+    const enteredUsername = usernameInput.value;
+    const enteredPassword = passwordInput.value;
+
+    const user = users.find(user => user.username === enteredUsername && user.password === enteredPassword);
+
+    if (user) {
+        username = enteredUsername;
+        loginScreen.style.display = 'none';
+        homeScreen.style.display = 'flex';
+        userWelcome.textContent = `${username}님, 환영합니다!`;
+        userWelcome.style.display = 'block';
+    } else {
+        alert('사용자 이름 또는 비밀번호가 잘못되었습니다.');
+    }
+});
+</script>
+</body>
+</html>

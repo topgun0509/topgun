@@ -1,0 +1,239 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Orbitron', sans-serif; /* Use Orbitron font */
+    background-color: #0a0a1a; /* Dark blue-black background */
+    color: #00e5ff; /* Cyan text color for a futuristic feel */
+}
+
+canvas {
+    display: block;
+}
+
+/* --- Screens (Login, Signup, Home) --- */
+#home-screen, #login-screen, #signup-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(10, 20, 40, 0.8) 0%, rgba(5, 10, 20, 0.95) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: rgba(0, 20, 40, 0.75); /* Dark, semi-transparent background */
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    border: 2px solid #00e5ff; /* Glowing cyan border */
+    box-shadow: 0 0 25px rgba(0, 229, 255, 0.5); /* Outer glow */
+    max-width: 600px;
+    width: 90%;
+}
+
+.modal-content h2 {
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    color: #ffffff;
+    text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff; /* Glowing text */
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    line-height: 1.6;
+    color: #c0f0ff;
+}
+
+/* --- Buttons --- */
+.modal-content button {
+    padding: 12px 25px;
+    font-size: 1em;
+    font-family: 'Orbitron', sans-serif;
+    cursor: pointer;
+    border: 2px solid #00e5ff;
+    border-radius: 8px;
+    margin: 10px;
+    background-color: transparent;
+    color: #00e5ff;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.modal-content button:hover, .modal-content button:focus {
+    background-color: rgba(0, 229, 255, 0.2);
+    box-shadow: 0 0 15px #00e5ff;
+    color: #ffffff;
+}
+
+.modal-content button:disabled {
+    border-color: #555;
+    color: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+/* Specific button colors for variety */
+#start-game-button-default, #login-button, #signup-button {
+    border-color: #00ff88;
+    color: #00ff88;
+}
+#start-game-button-default:hover, #login-button:hover, #signup-button:hover {
+    background-color: rgba(0, 255, 136, 0.2);
+    box-shadow: 0 0 15px #00ff88;
+    color: #ffffff;
+}
+
+#shop-back-button, #back-to-login-button {
+    border-color: #ff4f4f;
+    color: #ff4f4f;
+}
+#shop-back-button:hover, #back-to-login-button:hover {
+    background-color: rgba(255, 79, 79, 0.2);
+    box-shadow: 0 0 15px #ff4f4f;
+    color: #ffffff;
+}
+
+
+/* --- Button Container --- */
+.button-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 25px;
+}
+
+/* --- Inputs --- */
+#username-input, #password-input, #new-username-input, #new-password-input {
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #00e5ff;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    width: calc(100% - 26px);
+    font-family: 'Orbitron', sans-serif;
+}
+#username-input::placeholder, #password-input::placeholder, #new-username-input::placeholder, #new-password-input::placeholder {
+    color: #88d8e5;
+}
+
+/* --- Other UI Elements --- */
+#info, #hud, #game-over, #reward-message {
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 5px #000, 0 0 10px #00e5ff;
+}
+
+#info {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    color: white;
+    z-index: 100;
+}
+
+#reward-message {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FFD700;
+    font-size: 2.5em;
+    font-weight: bold;
+    z-index: 102;
+    display: none;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border: 1px solid #FFD700;
+    box-shadow: 0 0 15px #FFD700;
+}
+
+#hud {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    z-index: 100;
+    font-size: 1.5em;
+}
+
+#hud span {
+    margin-right: 20px;
+}
+
+#game-over {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    text-align: center;
+    display: none;
+    z-index: 101;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 40px;
+    border-radius: 10px;
+    border: 1px solid #ff4f4f;
+    box-shadow: 0 0 20px #ff4f4f;
+}
+
+#game-over p {
+    font-size: 3em;
+    margin: 0 0 20px 0;
+}
+
+.heart {
+    font-size: 24px;
+    color: red;
+    margin: 0 2px;
+    text-shadow: 0 0 5px #ff0000;
+}
+
+#instructions-content {
+    margin-top: 20px;
+    border-top: 1px solid #00e5ff;
+    padding-top: 20px;
+    text-align: left;
+}
+
+/* --- Shop & Bank --- */
+.shop-items-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.shop-item {
+    border: 1px solid #00e5ff;
+    border-radius: 8px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: rgba(0, 30, 50, 0.5);
+}
+
+.shop-item h3 {
+    margin-top: 0;
+    color: #ffffff;
+}
+
+#user-welcome {
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    color: #00ff88;
+    text-shadow: 0 0 8px #00ff88;
+}
