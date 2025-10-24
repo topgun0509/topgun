@@ -571,6 +571,7 @@ function loadModels() {
         checkAndStartAnimate();
     }, undefined, (error) => {
         console.error('Failed to load F-14 GLB, using fallback.', error);
+        console.log('Player F-14 GLB loading failed. Fallback to cone plane.'); // Added log
         createFallbackPlane(); // Fallback for player
         f22Loaded = true; // Mark as processed even if failed
         checkAndStartAnimate();
